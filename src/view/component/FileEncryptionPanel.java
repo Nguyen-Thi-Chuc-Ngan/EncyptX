@@ -21,7 +21,7 @@ public class FileEncryptionPanel extends JPanel {
 
     public FileEncryptionPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));  // Adding padding around the panel
+        setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 20));  // Adding padding around the panel
 
         // Initialize UI components
         inputFileLabel = new JLabel("Select file to encrypt:");
@@ -67,20 +67,25 @@ public class FileEncryptionPanel extends JPanel {
 
         // Add components to the panel
         add(dragDropPanel); // Add drag-and-drop panel
-        add(Box.createVerticalStrut(30));
+        add(Box.createVerticalStrut(10));
         add(containerPanel); // Add the container with equal size panels
     }
 
     private JPanel createDragDropPanel() {
         JPanel dragDropPanel = new JPanel(new BorderLayout());
-        JLabel dragLabel = new JLabel("Drag and drop a file here");
-        dragLabel.setHorizontalAlignment(JLabel.CENTER);
-        dragLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-        dragLabel.setPreferredSize(new Dimension(400, 90));
-        dragLabel.setBackground(new Color(240, 240, 240)); // Light background color for the drag area
-        dragLabel.setOpaque(true); // Ensure the drag area has a background color
+
+        JLabel dragLabel = new JLabel(new DragHereIcon());
+        dragLabel.setText("Drag Stuff Here");
+        dragLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+        dragLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        dragLabel.setForeground(Color.GRAY);
+        dragLabel.setFont(new Font("Monospace", Font.PLAIN, 24));
 
         dragDropPanel.add(dragLabel, BorderLayout.CENTER);
+        dragDropPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 2),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
 
         // Handle drag-and-drop events
         dragLabel.setTransferHandler(new TransferHandler() {

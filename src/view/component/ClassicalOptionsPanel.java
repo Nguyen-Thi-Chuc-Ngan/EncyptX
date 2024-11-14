@@ -1,5 +1,7 @@
 package view.component;
 
+import view.component.classical.HillCipherPanel;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -10,11 +12,14 @@ public class ClassicalOptionsPanel extends JPanel {
     protected JComboBox<String> languageComboBox;
     protected JComboBox<String> alphabetComboBox;
 
-    private JButton loadKeyButton;
-    private JButton saveKeyButton;
-    private JButton generateKeyButton;
+    protected JButton loadKeyButton;
+    protected JButton saveKeyButton;
+    protected JButton generateKeyButton;
+
+    private HillCipherPanel hillCipherPanel;
 
     private AlgorithmChangeListener listener;
+    private KeyGenerateListener keyGenerateListener;
 
     public ClassicalOptionsPanel() {
         // Sử dụng GridBagLayout để tự động căn chỉnh khi phóng to
@@ -23,13 +28,14 @@ public class ClassicalOptionsPanel extends JPanel {
         setPreferredSize(new Dimension(400, 0)); // Độ rộng của bảng chọn
         GridBagConstraints gbc = new GridBagConstraints();
 
+        hillCipherPanel = new HillCipherPanel();
         // Giảm khoảng cách giữa các phần tử
         gbc.insets = new Insets(5, 20, 5, 20); // Khoảng cách giữa các thành phần (top, left, bottom, right)
         gbc.fill = GridBagConstraints.HORIZONTAL; // Đảm bảo các thành phần chiếm toàn bộ chiều ngang
         gbc.weightx = 1.0; // Cung cấp không gian cho các thành phần chiếm toàn bộ chiều ngang
 
         // Tạo các thành phần giao diện
-        algorithmComboBox = new JComboBox<>(new String[]{"Hill", "Substitution", "Vigence", "Affine", "Transposition"});
+        algorithmComboBox = new JComboBox<>(new String[]{"Hill", "Substitution", "Vigenère", "Affine", "Transposition"});
         languageComboBox = new JComboBox<>(new String[]{"English", "Vietnamese"});
         alphabetComboBox = new JComboBox<>(new String[]{"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"}); // Các giá trị bảng chữ cái
 
@@ -66,7 +72,7 @@ public class ClassicalOptionsPanel extends JPanel {
         // Tạo các nút và thêm vào panel
         loadKeyButton = new JButton("Load Key");
         saveKeyButton = new JButton("Save Key");
-        generateKeyButton = new JButton("Generate Key");
+        generateKeyButton = new JButton("Generate");
 
         // Thêm các nút vào panel dưới cùng theo hàng ngang và căn phải
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Căn phải các nút
@@ -86,6 +92,14 @@ public class ClassicalOptionsPanel extends JPanel {
                 listener.onAlgorithmChanged((String) algorithmComboBox.getSelectedItem());
             }
         });
+
+        generateKeyButton.addActionListener(e -> {
+            if (keyGenerateListener != null) {
+                keyGenerateListener.onGenerateKey();
+            }
+        });
+
+
     }
 
     // Tạo interface để giao tiếp với CipherConfigurationPanel
@@ -96,6 +110,16 @@ public class ClassicalOptionsPanel extends JPanel {
     public void setAlgorithmChangeListener(AlgorithmChangeListener listener) {
         this.listener = listener;
     }
+
+    public interface KeyGenerateListener {
+        void onGenerateKey();
+    }
+    public void setKeyGenerateListener(KeyGenerateListener listener) {
+        this.keyGenerateListener = listener;
+    }
+
+
+
 
     public void updateLanguage() {
         String language = (String) languageComboBox.getSelectedItem();
@@ -114,5 +138,16 @@ public class ClassicalOptionsPanel extends JPanel {
                     "aăâbcdeêfghijklmnoôơpqrstuưvwxyz"   // Chữ cái tiếng Việt thường
             }));
         }
+    }
+    public String getSelectedAlgorithm() {
+        return (String) algorithmComboBox.getSelectedItem();
+    }
+
+    public String getSelectedLanguage() {
+        return (String) languageComboBox.getSelectedItem();
+    }
+
+    public String getSelectedAlphabet() {
+        return (String) alphabetComboBox.getSelectedItem();
     }
 }

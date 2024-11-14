@@ -18,6 +18,7 @@ public class ClassicalSymmetricEncryptionPanel extends JPanel {
         controller = new ClassicalSymmetricEncryptionController();
 
         CipherConfigurationPanel configurationPanel = new CipherConfigurationPanel();
+        configurationPanel.setPreferredSize(new Dimension(500, 250));
         // Tạo InputPanel, ResultPanel và ActionPanel ở dưới
         InputPanel inputPanel = new InputPanel();
         ResultPanel resultPanel = new ResultPanel();
@@ -37,6 +38,7 @@ public class ClassicalSymmetricEncryptionPanel extends JPanel {
 
         // JSplitPane để chia KeyOptionsPanel ở trên và bottomPanel ở dưới
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, configurationPanel, tabbedPane);
+        mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setDividerLocation(0.5);
         mainSplitPane.setResizeWeight(0.5);
 
@@ -70,7 +72,6 @@ public class ClassicalSymmetricEncryptionPanel extends JPanel {
                 // Giải mã văn bản
                 controller.decryptText(resultPanel);
             } else if (tabbedPane.getSelectedIndex() == 1) {  // Tab "File Encryption"
-                // Giải mã tệp
                 // Giải mã tệp
                 String inputFile = fileEncryptionPanel.getInputFilePath();
                 String outputDir = fileEncryptionPanel.getOutputDirPath();

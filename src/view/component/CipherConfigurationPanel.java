@@ -16,6 +16,7 @@ public class CipherConfigurationPanel extends JPanel {
         // Cài đặt listener để nhận sự kiện thay đổi thuật toán
         algorithmOptionsPanel.setAlgorithmChangeListener(algorithm -> cipherInfoPanel.showKeyPanel(algorithm));
 
+
         // Đặt kích thước ưa thích cho các panel con
         algorithmOptionsPanel.setPreferredSize(new Dimension(400, 0));
         cipherInfoPanel.setPreferredSize(new Dimension(400, 0));
@@ -28,8 +29,42 @@ public class CipherConfigurationPanel extends JPanel {
         // Thêm splitPane vào KeyOptionsPanel
         add(splitPane, BorderLayout.CENTER);
 
+
+        algorithmOptionsPanel.setAlgorithmChangeListener(algorithm -> cipherInfoPanel.showKeyPanel(algorithm));
+        algorithmOptionsPanel.setKeyGenerateListener(this::genKey);
+
     }
 
+    public void genKey() {
+        String selectedAlgorithm = algorithmOptionsPanel.getSelectedAlgorithm();
+        String selectedLanguage = algorithmOptionsPanel.getSelectedLanguage();
+        String selectedAlphabet = algorithmOptionsPanel.getSelectedAlphabet();
 
+        String generatedKey = "";
 
+        switch (selectedAlgorithm) {
+            case "Hill":
+                // Giả sử hillCipherPanel đã có phương thức genKey để tạo ma trận khóa
+                generatedKey = "Hill cipher key generated!";
+                break;
+            case "Substitution":
+                generatedKey = "Substitution cipher key generated!";
+                break;
+            case "Vigence":
+                generatedKey = "Vigence cipher key generated!";
+                break;
+            case "Affine":
+                generatedKey = "Affine cipher key generated!";
+                break;
+            case "Transposition":
+                generatedKey = "Transposition cipher key generated!";
+                break;
+            default:
+                generatedKey = "Algorithm not recognized";
+                break;
+        }
+
+        // Hiển thị dialog với kết quả
+        JOptionPane.showMessageDialog(this, generatedKey, "Key Generation", JOptionPane.INFORMATION_MESSAGE);
+    }
 }

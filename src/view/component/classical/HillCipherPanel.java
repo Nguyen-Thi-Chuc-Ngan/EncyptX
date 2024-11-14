@@ -119,7 +119,7 @@ public class HillCipherPanel extends JPanel {
     }
 
     // Generate random key matrix
-    public void genKey(String selectedLanguage) {
+    public int[][] genKey(String selectedLanguage) {
         int size = keyMatrix.length;
         SecureRandom random = new SecureRandom();
 
@@ -133,7 +133,10 @@ public class HillCipherPanel extends JPanel {
         } while (!isValidKeyMatrix(keyMatrix, selectedLanguage));
 
         isKeyGenerated = true;
+        return keyMatrix;
     }
+
+
 
     private boolean isValidKeyMatrix(int[][] matrix, String selectedLanguage) {
         int det = determinant(matrix, selectedLanguage) % getMod(selectedLanguage);

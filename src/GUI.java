@@ -14,7 +14,7 @@ public class GUI {
         frame.setSize(1200, 750);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-//        frame.setResizable(false);
+        frame.setResizable(false);
 
 //        ImageIcon icon = new ImageIcon("path/to/your/icon.png");
 //        frame.setIconImage(icon.getImage());

@@ -20,6 +20,7 @@ public class SymmetricEncryptionPanel extends JPanel {
         // Tạo KeyOptionsPanel ở trên
         KeyOptionsPanel keyOptionsPanel = new KeyOptionsPanel();
 
+
         // Tạo InputPanel, ResultPanel và ActionPanel ở dưới
         InputPanel inputPanel = new InputPanel();
         ResultPanel resultPanel = new ResultPanel();

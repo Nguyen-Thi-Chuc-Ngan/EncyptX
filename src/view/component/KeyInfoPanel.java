@@ -71,5 +71,7 @@ public class KeyInfoPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         add(buttonPanel, gbc);
+
+
     }
 }

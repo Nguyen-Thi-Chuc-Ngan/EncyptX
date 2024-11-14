@@ -101,7 +101,7 @@ public class CreatorInformation extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Desktop.getDesktop().browse(new java.net.URI("https://github.com/Nguyen-Thi-Chuc-Ngan/SafeDataEncryptor.git"));
+                    Desktop.getDesktop().browse(new java.net.URI("https://github.com/Nguyen-Thi-Chuc-Ngan/EncyptX.git"));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
