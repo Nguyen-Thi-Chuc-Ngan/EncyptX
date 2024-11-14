@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class InputPanel extends JPanel {
 
-    private JTextArea textArea;
+    public JTextArea textArea;
 
     public InputPanel() {
         setLayout(new BorderLayout(10, 10));

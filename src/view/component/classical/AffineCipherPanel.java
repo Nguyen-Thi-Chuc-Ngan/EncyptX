@@ -1,6 +1,5 @@
 package view.component.classical;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
@@ -8,33 +7,44 @@ import java.util.Random;
 public class AffineCipherPanel extends JPanel {
     private JTextField keyAField; // Khóa 'a'
     private JTextField keyBField; // Khóa 'b'
+    private JComboBox<String> caseStrategyCombo; // ComboBox cho Case Strategy
+    private JComboBox<String> foreignCharsCombo; // ComboBox cho Foreign Chars
 
     public AffineCipherPanel() {
-        setLayout(new BorderLayout(20, 20));
+        // Set layout cho panel
+        setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20)); // Thêm khoảng cách viền cho panel
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 0, 10, 0); // khoảng cách giữa các thành phần
 
-        // Panel nhập khóa 'a' và 'b'
-        JPanel keyPanel = new JPanel();
-        keyPanel.setLayout(new GridLayout(3, 2, 10, 20)); // 3 hàng, 2 cột, điều chỉnh khoảng cách
-        keyPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Thêm khoảng cách xung quanh panel
+        // Tạo các thành phần
+        keyAField = new JTextField(20); // Ô nhập cho khóa 'a'
+        keyBField = new JTextField(20); // Ô nhập cho khóa 'b'
+        caseStrategyCombo = new JComboBox<>(new String[]{"Ignore Case", "Uppercase", "Lowercase"});  // Lựa chọn chế độ chữ hoa/chữ thường
+        foreignCharsCombo = new JComboBox<>(new String[]{"Maintain case", "Ignore case", "Strict (A ≠ a)"});  // Lựa chọn cho các ký tự đặc biệt
 
-        keyPanel.add(new JLabel("Enter 'a' (1-25, must have inverse mod 26):"));
-        keyAField = new JTextField();
-        keyAField.setFont(new Font("Arial", Font.PLAIN, 14)); // Thay đổi font chữ
-        keyPanel.add(keyAField);
+        // Cấu hình và thêm các thành phần vào panel
+        addLabeledComponent("Enter 'a' (1-25, must have inverse mod 26):", keyAField, gbc, 0);
+        addLabeledComponent("Enter 'b' (0-25):", keyBField, gbc, 1);
+        addLabeledComponent("Case Strategy:", caseStrategyCombo, gbc, 2);
+        addLabeledComponent("Foreign Chars:", foreignCharsCombo, gbc, 3);
+    }
 
-        keyPanel.add(new JLabel("Enter 'b' (0-25):"));
-        keyBField = new JTextField();
-        keyBField.setFont(new Font("Arial", Font.PLAIN, 14)); // Thay đổi font chữ
-        keyPanel.add(keyBField);
+    // Phương thức để tạo nhãn và thành phần với tỷ lệ 20-80
+    private void addLabeledComponent(String labelText, JComponent component, GridBagConstraints gbc, int row) {
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridy = row;
 
-        // Panel nhập và hiển thị văn bản
-        JPanel textPanel = new JPanel();
-        textPanel.setLayout(new GridLayout(2, 1, 10, 10));
-        textPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        // Tỷ lệ 20% cho label
+        gbc.gridx = 0;
+        gbc.weightx = 0.2;
+        JLabel label = new JLabel(labelText);
+        add(label, gbc);
 
-        // Thêm các panel vào giao diện
-        add(keyPanel, BorderLayout.NORTH);
-        add(textPanel, BorderLayout.CENTER);
+        // Tỷ lệ 80% cho component
+        gbc.gridx = 1;
+        gbc.weightx = 0.8;
+        add(component, gbc);
     }
 
     public void generateKeys() {
@@ -60,14 +70,24 @@ public class AffineCipherPanel extends JPanel {
             int a = Integer.parseInt(keyAField.getText());
             int b = Integer.parseInt(keyBField.getText());
 
-//            AffineCipher affineCipher = new AffineCipher(a, b, alphabet);
-//            return affineCipher.encrypt(plaintext);
+            StringBuilder ciphertext = new StringBuilder();
+            for (char c : plaintext.toCharArray()) {
+                int index = alphabet.indexOf(c);
+                if (index != -1) {
+                    // Mã hóa theo công thức Affine: E(x) = (a * x + b) % 26
+                    int encryptedIndex = (a * index + b) % alphabet.length();
+                    ciphertext.append(alphabet.charAt(encryptedIndex));
+                } else {
+                    // Nếu ký tự không nằm trong bảng chữ cái, giữ nguyên
+                    ciphertext.append(c);
+                }
+            }
+            return ciphertext.toString();
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid input for keys.", "Error", JOptionPane.ERROR_MESSAGE);
             return "";
         }
-        return plaintext;
     }
 
     // Giải mã văn bản
@@ -76,14 +96,27 @@ public class AffineCipherPanel extends JPanel {
             int a = Integer.parseInt(keyAField.getText());
             int b = Integer.parseInt(keyBField.getText());
 
-//            AffineCipher affineCipher = new AffineCipher(a, b, alphabet);
-//            return affineCipher.decrypt(ciphertext);
+            // Tính nghịch đảo của 'a' modulo 26
+            int aInverse = modInverse(a, 26);
+
+            StringBuilder plaintext = new StringBuilder();
+            for (char c : ciphertext.toCharArray()) {
+                int index = alphabet.indexOf(c);
+                if (index != -1) {
+                    // Giải mã theo công thức Affine: D(x) = a_inv * (x - b) % 26
+                    int decryptedIndex = (aInverse * (index - b + 26)) % alphabet.length();
+                    plaintext.append(alphabet.charAt(decryptedIndex));
+                } else {
+                    // Nếu ký tự không nằm trong bảng chữ cái, giữ nguyên
+                    plaintext.append(c);
+                }
+            }
+            return plaintext.toString();
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid input for keys.", "Error", JOptionPane.ERROR_MESSAGE);
             return "";
         }
-        return ciphertext;
     }
 
     // Tính ước chung lớn nhất (GCD)
@@ -91,5 +124,31 @@ public class AffineCipherPanel extends JPanel {
         if (b == 0) return a;
         return gcd(b, a % b);
     }
-}
 
+    // Tính nghịch đảo mod 26
+    private int modInverse(int a, int m) {
+        for (int x = 1; x < m; x++) {
+            if ((a * x) % m == 1) {
+                return x;
+            }
+        }
+        return -1; // Trả về -1 nếu không tìm thấy nghịch đảo
+    }
+
+    // Các phương thức getter
+    public String getKeyA() {
+        return keyAField.getText();
+    }
+
+    public String getKeyB() {
+        return keyBField.getText();
+    }
+
+    public String getCaseStrategy() {
+        return (String) caseStrategyCombo.getSelectedItem();
+    }
+
+    public String getForeignCharsOption() {
+        return (String) foreignCharsCombo.getSelectedItem();
+    }
+}

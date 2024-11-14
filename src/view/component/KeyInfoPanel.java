@@ -9,7 +9,7 @@ public class KeyInfoPanel extends JPanel {
     private JTextField keyField;
     private JTextField ivField;
     private JComboBox<String> ivSizeComboBox;
-    protected JComboBox<String> keySizeComboBox;  // Thêm ComboBox cho key size
+    public JComboBox<String> keySizeComboBox;  // Thêm ComboBox cho key size
     private JButton loadKeyButton;
     private JButton saveKeyButton;
     private JButton generateKeyButton;

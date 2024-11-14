@@ -9,6 +9,8 @@ public class ActionPanel extends JPanel {
     private JButton encryptButton;
     private JButton decryptButton;
 
+    private String encryptionMode = "text"; // Mặc định là chế độ mã hóa văn bản
+
     public ActionPanel() {
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
@@ -26,13 +28,42 @@ public class ActionPanel extends JPanel {
 
         add(encryptButton);
         add(decryptButton);
+
+        // Thêm ActionListener cho các nút mã hóa/giải mã
+        encryptButton.addActionListener(e -> handleEncryption());
+        decryptButton.addActionListener(e -> handleDecryption());
+    }
+    public void setEncryptionMode(String mode) {
+        this.encryptionMode = mode;
     }
 
-    public void addEncryptListener(ActionListener listener) {
-        encryptButton.addActionListener(listener);
+
+    private void handleEncryption() {
+        if ("text".equals(encryptionMode)) {
+            // Thực hiện mã hóa văn bản
+            System.out.println("Mã hóa văn bản");
+        } else if ("file".equals(encryptionMode)) {
+            // Thực hiện mã hóa tệp
+            System.out.println("Mã hóa tệp");
+        }
     }
 
-    public void addDecryptListener(ActionListener listener) {
-        decryptButton.addActionListener(listener);
+    private void handleDecryption() {
+        if ("text".equals(encryptionMode)) {
+            // Thực hiện giải mã văn bản
+            System.out.println("Giải mã văn bản");
+        } else if ("file".equals(encryptionMode)) {
+            // Thực hiện giải mã tệp
+            System.out.println("Giải mã tệp");
+        }
+    }
+
+    // Getter cho các nút
+    public JButton getEncryptButton() {
+        return encryptButton;
+    }
+
+    public JButton getDecryptButton() {
+        return decryptButton;
     }
 }

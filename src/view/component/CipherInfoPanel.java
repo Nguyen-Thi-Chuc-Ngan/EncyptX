@@ -1,7 +1,7 @@
 package view.component;
 
-import view.component.classical.AffineCipherPanel;
-import view.component.classical.HillCipherPanel;
+import controller.MainController;
+import view.component.classical.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -11,12 +11,12 @@ public class CipherInfoPanel extends JPanel {
     protected CardLayout cardLayout;
     protected JPanel hillKeyPanel;
     protected JPanel substitutionKeyPanel;
-    protected JPanel vigenèreKeyPanel;
+    protected JPanel vigenereKeyPanel;
     protected JPanel affineKeyPanel;
     protected JPanel transpositionKeyPanel;
 
 
-    public CipherInfoPanel() {
+    public CipherInfoPanel(MainController mainController) {
         cardLayout = new CardLayout();
         setBorder(new TitledBorder("Key Info"));
         setLayout(cardLayout);
@@ -25,14 +25,14 @@ public class CipherInfoPanel extends JPanel {
         // Khởi tạo các panel cho từng thuật toán
         hillKeyPanel = createHillKeyPanel();
         substitutionKeyPanel = createSubstitutionKeyPanel();
-        vigenèreKeyPanel = createVigenèreKeyPanel();
+        vigenereKeyPanel = createVigenereKeyPanel();
         affineKeyPanel = createAffineKeyPanel();
         transpositionKeyPanel = createTranspositionKeyPanel();
 
         // Thêm từng panel vào CardLayout
         add(hillKeyPanel, "Hill");
         add(substitutionKeyPanel, "Substitution");
-        add(vigenèreKeyPanel, "Vigenère");
+        add(vigenereKeyPanel, "Vigenère");
         add(affineKeyPanel, "Affine");
         add(transpositionKeyPanel, "Transposition");
     }
@@ -55,17 +55,22 @@ public class CipherInfoPanel extends JPanel {
 
     private JPanel createSubstitutionKeyPanel() {
         JPanel panel = new JPanel();
-        panel.add(new JLabel("Enter Substitution Cipher Key:"));
-        panel.add(new JTextField(10));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Set vertical layout
+
+        SubstitutionCipherPanel substitutionCipherPanel = new SubstitutionCipherPanel(); // Create an instance of SubstitutionCipherPanel
+        substitutionCipherPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(substitutionCipherPanel); // Add the SubstitutionCipherPanel instance to the panel
+
         return panel;
     }
 
-    private JPanel createVigenèreKeyPanel() {
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Enter Vigenère Cipher Key:"));
-        panel.add(new JTextField(10));
+    private JPanel createVigenereKeyPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        VigenereCipherPanel vigenereCipherPanel = new VigenereCipherPanel();
+        panel.add(vigenereCipherPanel, BorderLayout.CENTER); // Thêm VigenereCipherPanel vào panel chính
         return panel;
     }
+
 
     private JPanel createAffineKeyPanel() {
         JPanel panel = new JPanel();
@@ -75,18 +80,15 @@ public class CipherInfoPanel extends JPanel {
         AffineCipherPanel affineCipherPanel = new AffineCipherPanel();
         panel.add(affineCipherPanel, BorderLayout.CENTER);  // Thêm AffineCipherPanel vào panel
 
-        // Thêm một nút để tạo khóa (nếu cần)
-        JButton generateKeyButton = new JButton("Generate Keys");
-        generateKeyButton.addActionListener(e -> affineCipherPanel.generateKeys()); // Tạo khóa ngẫu nhiên
-        panel.add(generateKeyButton, BorderLayout.SOUTH); // Thêm nút vào dưới cùng của panel
-
         return panel;
     }
 
     private JPanel createTranspositionKeyPanel() {
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Enter Transposition Cipher Key:"));
-        panel.add(new JTextField(10));
+        JPanel panel = new JPanel(new BorderLayout());
+
+        TranspositionCipherPanel transpositionCipherPanel = new TranspositionCipherPanel();
+        panel.add(transpositionCipherPanel, BorderLayout.CENTER);
+
         return panel;
     }
 

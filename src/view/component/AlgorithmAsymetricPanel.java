@@ -4,16 +4,15 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
-public class AlgorithmOptionsPanel extends JPanel {
-
-    public JComboBox<String> algorithmComboBox;
+public class AlgorithmAsymetricPanel extends JPanel {
+    protected JComboBox<String> algorithmComboBox;
     protected JComboBox<String> languageComboBox;
-    public JComboBox<String> modeComboBox;
-    public JComboBox<String> paddingComboBox;
+    protected JComboBox<String> modeComboBox;
+    protected JComboBox<String> paddingComboBox;
     protected JComboBox<String> alphabetComboBox;
 
-    public AlgorithmOptionsPanel() {
-        // Sử dụng GridBagLayout để tự động căn chỉnh khi phóng to
+    public AlgorithmAsymetricPanel(){
+// Sử dụng GridBagLayout để tự động căn chỉnh khi phóng to
         setLayout(new GridBagLayout());
         setBorder(new TitledBorder("Algorithm Options"));
         setPreferredSize(new Dimension(400, 0)); // Độ rộng của bảng chọn
@@ -25,10 +24,10 @@ public class AlgorithmOptionsPanel extends JPanel {
         gbc.weightx = 1.0; // Cung cấp không gian cho các thành phần chiếm toàn bộ chiều ngang
 
         // Tạo các thành phần giao diện
-        algorithmComboBox = new JComboBox<>(new String[]{"AES", "DES"});
+        algorithmComboBox = new JComboBox<>(new String[]{"RSA"});
         languageComboBox = new JComboBox<>(new String[]{"English", "Vietnamese"});
-        modeComboBox = new JComboBox<>(new String[]{"ECB", "CBC", "PCBC", "CFB", "OFB", "CTR", "CTS", "GCM"});
-        paddingComboBox = new JComboBox<>(new String[]{"NoPadding", "PKCS5Padding","ISO10126Padding"});
+        modeComboBox = new JComboBox<>(new String[]{});
+        paddingComboBox = new JComboBox<>(new String[]{});
         alphabetComboBox = new JComboBox<>(new String[]{"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"}); // Các giá trị bảng chữ cái
 
 
@@ -103,5 +102,6 @@ public class AlgorithmOptionsPanel extends JPanel {
                     "aăâbcdeêfghijklmnoôơpqrstuưvwxyz"   // Chữ cái tiếng Việt thường
             }));
         }
+
     }
 }

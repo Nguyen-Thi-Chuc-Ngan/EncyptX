@@ -1,6 +1,5 @@
 package view;
 
-import controller.SymmetricEncryptionController;
 import view.component.*;
 
 import javax.swing.*;
@@ -8,85 +7,89 @@ import java.awt.*;
 
 public class SymmetricEncryptionPanel extends JPanel {
 
-    private final SymmetricEncryptionController controller;
-    private final JTabbedPane tabbedPane;
-
+    private AlgorithmOptionsPanel algorithmOptionsPanel;
+    private KeyInfoPanel keyInfoPanel;
 
     public SymmetricEncryptionPanel() {
         setLayout(new BorderLayout(10, 10));
 
-        controller = new SymmetricEncryptionController();
+        // Tạo panel tùy chọn thuật toán và thông tin khóa
+        algorithmOptionsPanel = new AlgorithmOptionsPanel();
+        keyInfoPanel = new KeyInfoPanel();
 
-        // Tạo KeyOptionsPanel ở trên
-        KeyOptionsPanel keyOptionsPanel = new KeyOptionsPanel();
+        // Đặt kích thước ưa thích cho các panel con
+        algorithmOptionsPanel.setPreferredSize(new Dimension(400, 0));
+        keyInfoPanel.setPreferredSize(new Dimension(400, 0));
 
+        // Tạo JSplitPane để chia hai panel
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, algorithmOptionsPanel, keyInfoPanel);
+        splitPane.setContinuousLayout(true); // Hiển thị liên tục khi thay đổi kích thước
+        splitPane.setDividerLocation(0.5); // Vị trí phân chia ban đầu
+        splitPane.setResizeWeight(0.5); // Cân bằng chiều rộng cho cả hai bên
 
-        // Tạo InputPanel, ResultPanel và ActionPanel ở dưới
-        InputPanel inputPanel = new InputPanel();
-        ResultPanel resultPanel = new ResultPanel();
-        ActionPanel actionPanel = new ActionPanel();
+        // Thêm splitPane vào KeyOptionsPanel
+        add(splitPane, BorderLayout.CENTER);
 
-        // Tạo TextEncryptionPanel để chứa InputPanel và ResultPanel
-        TextEncryptionPanel textEncryptionPanel = new TextEncryptionPanel(inputPanel, resultPanel);
+        // Thêm action listener cho algorithmComboBox
+        algorithmOptionsPanel.algorithmComboBox.addActionListener(e -> updateOptions());
+        algorithmOptionsPanel.modeComboBox.addActionListener(e -> updatePaddingOptions());
+    }
+    // Hàm cập nhật các options dựa trên thuật toán
+    // Hàm cập nhật các options dựa trên thuật toán
+    public void updateOptions() {
+        String algorithm = (String) algorithmOptionsPanel.algorithmComboBox.getSelectedItem();
 
-        // Tạo FileEncryptionPanel cho mã hóa tệp
-        FileEncryptionPanel fileEncryptionPanel = new FileEncryptionPanel();
+        // Cập nhật key size combo box
+        keyInfoPanel.keySizeComboBox.removeAllItems();
+        algorithmOptionsPanel.modeComboBox.removeAllItems();
 
-        tabbedPane = new JTabbedPane();
+        if ("DES".equals(algorithm)) {
+            keyInfoPanel.keySizeComboBox.addItem("56");
+            keyInfoPanel.keySizeComboBox.setEnabled(false); // Key size không thể thay đổi cho DES
 
-        // Thêm các panel vào tabbedPane
-        tabbedPane.addTab("Text Encryption", textEncryptionPanel);
-        tabbedPane.addTab("File Encryption", fileEncryptionPanel);
+            // Cập nhật các chế độ cho DES
+            algorithmOptionsPanel.modeComboBox.addItem("ECB");
+            algorithmOptionsPanel.modeComboBox.addItem("CBC");
+            algorithmOptionsPanel.modeComboBox.addItem("CFB");
+            algorithmOptionsPanel.modeComboBox.addItem("OFB");
+            algorithmOptionsPanel.modeComboBox.addItem("CTR");
+        } else if ("AES".equals(algorithm)) {
+            keyInfoPanel.keySizeComboBox.addItem("128");
+            keyInfoPanel.keySizeComboBox.addItem("192");
+            keyInfoPanel.keySizeComboBox.addItem("256");
+            keyInfoPanel.keySizeComboBox.setEnabled(true); // Cho phép thay đổi key size cho AES
 
-        // JSplitPane để chia KeyOptionsPanel ở trên và bottomPanel ở dưới
-        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, keyOptionsPanel, tabbedPane);
-        mainSplitPane.setDividerLocation(0.5);
-        mainSplitPane.setResizeWeight(0.5);
+            // Cập nhật các chế độ cho AES
+            algorithmOptionsPanel.modeComboBox.addItem("ECB");
+            algorithmOptionsPanel.modeComboBox.addItem("CBC");
+            algorithmOptionsPanel.modeComboBox.addItem("CFB");
+            algorithmOptionsPanel.modeComboBox.addItem("OFB");
+            algorithmOptionsPanel.modeComboBox.addItem("CTR");
+            algorithmOptionsPanel.modeComboBox.addItem("CTS");
+            algorithmOptionsPanel.modeComboBox.addItem("GCM");
+        }
+    }
 
-        // Thêm mainSplitPane vào SymmetricEncryptionPanel
-        add(mainSplitPane, BorderLayout.CENTER);
-        add(actionPanel, BorderLayout.SOUTH);
+    // Hàm cập nhật padding options dựa trên thuật toán và chế độ
+    public void updatePaddingOptions() {
+        algorithmOptionsPanel.paddingComboBox.removeAllItems();
+        String algorithm = (String) algorithmOptionsPanel.algorithmComboBox.getSelectedItem();
+        String mode = (String) algorithmOptionsPanel.modeComboBox.getSelectedItem();
 
-        actionPanel.addEncryptListener(e -> {
-            // Kiểm tra tab hiện tại
-            if (tabbedPane.getSelectedIndex() == 0) {  // Tab "Text Encryption"
-                // Mã hóa văn bản
-                controller.encryptText(inputPanel, resultPanel);
-            } else if (tabbedPane.getSelectedIndex() == 1) {  // Tab "File Encryption"
-                String inputFile = fileEncryptionPanel.getInputFilePath();
-                String outputDir = fileEncryptionPanel.getOutputDirPath();
-
-                // Kiểm tra nếu các file và thư mục không hợp lệ
-                if (inputFile.isEmpty() || outputDir.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Please select both input file and output directory.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                // Gọi phương thức mã hóa tệp trong controller với các tham số
-                controller.encryptFile(inputFile, outputDir);
+        if ("AES".equals(algorithm)) {
+            if ("CTR".equals(mode) || "CTS".equals(mode) || "GCM".equals(mode)) {
+                // Các chế độ này không cần padding
+                algorithmOptionsPanel.paddingComboBox.addItem("NoPadding");
+            } else {
+                // Các chế độ khác yêu cầu padding
+                algorithmOptionsPanel.paddingComboBox.addItem("NoPadding");
+                algorithmOptionsPanel.paddingComboBox.addItem("PKCS5Padding");
+                algorithmOptionsPanel.paddingComboBox.addItem("ISO10126Padding");
             }
-        });
-
-        actionPanel.addDecryptListener(e -> {
-            // Kiểm tra tab hiện tại
-            if (tabbedPane.getSelectedIndex() == 0) {  // Tab "Text Encryption"
-                // Giải mã văn bản
-                controller.decryptText(resultPanel);
-            } else if (tabbedPane.getSelectedIndex() == 1) {  // Tab "File Encryption"
-                // Giải mã tệp
-                // Giải mã tệp
-                String inputFile = fileEncryptionPanel.getInputFilePath();
-                String outputDir = fileEncryptionPanel.getOutputDirPath();
-
-                // Kiểm tra nếu các file và thư mục không hợp lệ
-                if (inputFile.isEmpty() || outputDir.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Please select both input file and output directory.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                // Gọi phương thức giải mã tệp trong controller với các tham số
-                controller.decryptFile(inputFile, outputDir);// Gọi phương thức giải mã tệp trong FileEncryptionPanel
-            }
-        });
+        } else if ("DES".equals(algorithm)) {
+            // DES chỉ sử dụng PKCS5Padding hoặc NoPadding
+            algorithmOptionsPanel.paddingComboBox.addItem("PKCS5Padding");
+            algorithmOptionsPanel.paddingComboBox.addItem("NoPadding");
+        }
     }
 }

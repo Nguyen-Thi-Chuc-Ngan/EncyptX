@@ -1,7 +1,6 @@
 package view;
 
-import controller.ClassicalSymmetricEncryptionController;
-import controller.SymmetricEncryptionController;
+import controller.MainController;
 import view.component.*;
 
 import javax.swing.*;
@@ -9,83 +8,69 @@ import java.awt.*;
 
 public class ClassicalSymmetricEncryptionPanel extends JPanel {
 
-    private final ClassicalSymmetricEncryptionController controller;
-    private final JTabbedPane tabbedPane;
+    private ClassicalOptionsPanel algorithmOptionsPanel;
+    private CipherInfoPanel cipherInfoPanel;
+    private MainController mainController;
 
-    public ClassicalSymmetricEncryptionPanel(){
+    public ClassicalSymmetricEncryptionPanel(MainController mainController) {
+        this.mainController = mainController;
         setLayout(new BorderLayout(10, 10));
 
-        controller = new ClassicalSymmetricEncryptionController();
+        algorithmOptionsPanel = new ClassicalOptionsPanel(mainController);
+        cipherInfoPanel = new CipherInfoPanel(mainController);
 
-        CipherConfigurationPanel configurationPanel = new CipherConfigurationPanel();
-        configurationPanel.setPreferredSize(new Dimension(500, 250));
-        // Tạo InputPanel, ResultPanel và ActionPanel ở dưới
-        InputPanel inputPanel = new InputPanel();
-        ResultPanel resultPanel = new ResultPanel();
-        ActionPanel actionPanel = new ActionPanel();
+        // Cài đặt listener để nhận sự kiện thay đổi thuật toán
+        algorithmOptionsPanel.setAlgorithmChangeListener(algorithm -> cipherInfoPanel.showKeyPanel(algorithm));
 
-        // Tạo TextEncryptionPanel để chứa InputPanel và ResultPanel
-        TextEncryptionPanel textEncryptionPanel = new TextEncryptionPanel(inputPanel, resultPanel);
 
-        // Tạo FileEncryptionPanel cho mã hóa tệp
-        FileEncryptionPanel fileEncryptionPanel = new FileEncryptionPanel();
+        // Đặt kích thước ưa thích cho các panel con
+        algorithmOptionsPanel.setPreferredSize(new Dimension(400, 0));
+        cipherInfoPanel.setPreferredSize(new Dimension(400, 0));
 
-        tabbedPane = new JTabbedPane();
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, algorithmOptionsPanel, cipherInfoPanel);
+        splitPane.setContinuousLayout(true); // Hiển thị liên tục khi thay đổi kích thước
+        splitPane.setDividerLocation(0.5); // Vị trí phân chia ban đầu
+        splitPane.setResizeWeight(0.5); // Cân bằng chiều rộng cho cả hai bên
 
-        // Thêm các panel vào tabbedPane
-        tabbedPane.addTab("Text Encryption", textEncryptionPanel);
-        tabbedPane.addTab("File Encryption", fileEncryptionPanel);
+        // Thêm splitPane vào KeyOptionsPanel
+        add(splitPane, BorderLayout.CENTER);
 
-        // JSplitPane để chia KeyOptionsPanel ở trên và bottomPanel ở dưới
-        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, configurationPanel, tabbedPane);
-        mainSplitPane.setContinuousLayout(true);
-        mainSplitPane.setDividerLocation(0.5);
-        mainSplitPane.setResizeWeight(0.5);
+        algorithmOptionsPanel.setAlgorithmChangeListener(algorithm -> cipherInfoPanel.showKeyPanel(algorithm));
+        algorithmOptionsPanel.setKeyGenerateListener(this::genKey);
 
-        // Thêm mainSplitPane vào SymmetricEncryptionPanel
-        add(mainSplitPane, BorderLayout.CENTER);
-        add(actionPanel, BorderLayout.SOUTH);
+    }
 
-        actionPanel.addEncryptListener(e -> {
-            // Kiểm tra tab hiện tại
-            if (tabbedPane.getSelectedIndex() == 0) {  // Tab "Text Encryption"
-                // Mã hóa văn bản
-                controller.encryptText(inputPanel, resultPanel);
-            } else if (tabbedPane.getSelectedIndex() == 1) {  // Tab "File Encryption"
-                String inputFile = fileEncryptionPanel.getInputFilePath();
-                String outputDir = fileEncryptionPanel.getOutputDirPath();
+    public void genKey() {
+        String selectedAlgorithm = algorithmOptionsPanel.getSelectedAlgorithm();
+        String selectedLanguage = algorithmOptionsPanel.getSelectedLanguage();
+        String selectedAlphabet = algorithmOptionsPanel.getSelectedAlphabet();
 
-                // Kiểm tra nếu các file và thư mục không hợp lệ
-                if (inputFile.isEmpty() || outputDir.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Please select both input file and output directory.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+        String generatedKey = "";
 
-                // Gọi phương thức mã hóa tệp trong controller với các tham số
-                controller.encryptFile(inputFile, outputDir);
-            }
-        });
+        switch (selectedAlgorithm) {
+            case "Hill":
+                // Giả sử hillCipherPanel đã có phương thức genKey để tạo ma trận khóa
+                generatedKey = "Hill cipher key generated!";
+                break;
+            case "Substitution":
+                generatedKey = "Substitution cipher key generated!";
+                break;
+            case "Vigence":
+                generatedKey = "Vigence cipher key generated!";
+                break;
+            case "Affine":
+                generatedKey = "Affine cipher key generated!";
+                break;
+            case "Transposition":
+                generatedKey = "Transposition cipher key generated!";
+                break;
+            default:
+                generatedKey = "Algorithm not recognized";
+                break;
+        }
 
-        actionPanel.addDecryptListener(e -> {
-            // Kiểm tra tab hiện tại
-            if (tabbedPane.getSelectedIndex() == 0) {  // Tab "Text Encryption"
-                // Giải mã văn bản
-                controller.decryptText(resultPanel);
-            } else if (tabbedPane.getSelectedIndex() == 1) {  // Tab "File Encryption"
-                // Giải mã tệp
-                String inputFile = fileEncryptionPanel.getInputFilePath();
-                String outputDir = fileEncryptionPanel.getOutputDirPath();
-
-                // Kiểm tra nếu các file và thư mục không hợp lệ
-                if (inputFile.isEmpty() || outputDir.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Please select both input file and output directory.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                // Gọi phương thức giải mã tệp trong controller với các tham số
-                controller.decryptFile(inputFile, outputDir);// Gọi phương thức giải mã tệp trong FileEncryptionPanel
-            }
-        });
+        // Hiển thị dialog với kết quả
+        JOptionPane.showMessageDialog(this, generatedKey, "Key Generation", JOptionPane.INFORMATION_MESSAGE);
     }
 
 }

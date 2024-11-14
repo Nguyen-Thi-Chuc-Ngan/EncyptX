@@ -1,11 +1,8 @@
 package view.component;
 
-import controller.SymmetricEncryptionController;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.event.*;
 import java.io.File;
 
 public class FileEncryptionPanel extends JPanel {

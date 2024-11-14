@@ -1,5 +1,6 @@
 package view.component;
 
+import controller.MainController;
 import view.component.classical.HillCipherPanel;
 
 import javax.swing.*;
@@ -21,7 +22,7 @@ public class ClassicalOptionsPanel extends JPanel {
     private AlgorithmChangeListener listener;
     private KeyGenerateListener keyGenerateListener;
 
-    public ClassicalOptionsPanel() {
+    public ClassicalOptionsPanel(MainController mainController) {
         // Sử dụng GridBagLayout để tự động căn chỉnh khi phóng to
         setLayout(new GridBagLayout());
         setBorder(new TitledBorder("Algorithm Options"));
@@ -30,9 +31,9 @@ public class ClassicalOptionsPanel extends JPanel {
 
         hillCipherPanel = new HillCipherPanel();
         // Giảm khoảng cách giữa các phần tử
-        gbc.insets = new Insets(5, 20, 5, 20); // Khoảng cách giữa các thành phần (top, left, bottom, right)
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Đảm bảo các thành phần chiếm toàn bộ chiều ngang
-        gbc.weightx = 1.0; // Cung cấp không gian cho các thành phần chiếm toàn bộ chiều ngang
+        gbc.insets = new Insets(5, 20, 5, 20);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
 
         // Tạo các thành phần giao diện
         algorithmComboBox = new JComboBox<>(new String[]{"Hill", "Substitution", "Vigenère", "Affine", "Transposition"});
